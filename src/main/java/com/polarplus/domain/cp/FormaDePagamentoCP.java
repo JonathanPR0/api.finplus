@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "cp_formas_pagamento")
+@Table(name = "fin_cp_formas_pagamento")
 @Getter
 @Setter
 @AllArgsConstructor

@@ -2,6 +2,8 @@ package com.polarplus.domain;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,13 +13,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "contas_bancarias")
+@Table(name = "fin_contas_bancarias", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "descricao", "id_banco" })
+})
 @Getter
 @Setter
 @AllArgsConstructor
@@ -30,6 +35,7 @@ public class ContaBancaria implements Serializable {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "id_banco", nullable = false)
     private Banco banco;
 

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -23,14 +25,20 @@ import lombok.RequiredArgsConstructor;
 
 public class UserController {
     private final UserService userService;
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     // ! DESCOBRIR COMO RESOLVER BUG DE VALIDAÇÃO DE PERMISSÃO
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_EMPLOYE')")
     @GetMapping
-    public ResponseEntity<List<User>> getUser(Authentication authentication) {
-        List<User> users = userService.getAll();
-        return ResponseEntity.ok(users);
-
+    public ResponseEntity<?> getUser(Authentication authentication) {
+        try {
+            List<User> users = userService.getAll();
+            return ResponseEntity.ok(users);
+        } catch (RuntimeException e) {
+            // Retorna um body com a mensagem de erro
+            logger.error(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or #id == authentication.principal.id")
@@ -41,6 +49,7 @@ public class UserController {
             return ResponseEntity.ok(user);
         } catch (RuntimeException e) {
             // Retorna um body com a mensagem de erro
+            logger.error(e.getMessage());
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }

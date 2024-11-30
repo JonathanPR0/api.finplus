@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "categorias")
+@Table(name = "fin_categorias")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -34,7 +34,7 @@ public class Categoria implements Serializable {
     private String nome;
 
     @Enumerated(EnumType.STRING) // Usando EnumType.STRING para armazenar o nome do enum no banco
-    @Column(nullable = false)
+    @Column(nullable = true)
     private TipoCategoria tipo;
 
     @Column(nullable = false)

@@ -30,7 +30,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "cp_titulos")
+@Table(name = "fin_cp_titulos")
 @Getter
 @Setter
 @AllArgsConstructor

@@ -12,13 +12,16 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "cr_clientes")
+@Table(name = "fin_cr_clientes", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "nome", "numero", "endereco", "cnpj" })
+})
 @Getter
 @Setter
 @AllArgsConstructor
@@ -30,10 +33,10 @@ public class Cliente implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 150)
+    @Column(nullable = false, length = 150)
     private String nome;
 
-    @Column(nullable = false, unique = true, length = 15)
+    @Column(unique = true, length = 15)
     private String numero;
 
     @Column(nullable = false, unique = true, columnDefinition = "TEXT")

@@ -1,6 +1,5 @@
 package com.polarplus.controllers;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -8,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.polarplus.domain.ContaBancaria;
 import com.polarplus.dto.ContaBancariaDTO;
+import com.polarplus.dto.PaginationDTO;
+import com.polarplus.dto.filters.FiltersContaBancariaDTO;
 import com.polarplus.services.ContaBancariaService;
+import com.polarplus.utils.PaginationUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,15 +31,18 @@ import lombok.RequiredArgsConstructor;
 public class ContaBancariaController {
     private final ContaBancariaService contaBancariaService;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping
-    public ResponseEntity<List<ContaBancaria>> getContaBancaria(Authentication authentication) {
-        List<ContaBancaria> contaBancarias = contaBancariaService.getAll();
-        return ResponseEntity.ok(contaBancarias);
-
+    public ResponseEntity<?> getContaBancaria(Authentication authentication, @ModelAttribute PaginationDTO pagination,
+            @ModelAttribute FiltersContaBancariaDTO filters) {
+        try {
+            PaginationUtil.PaginatedResponse<ContaBancaria> contaBancarias = contaBancariaService.getAll(pagination,
+                    filters);
+            return ResponseEntity.ok(contaBancarias);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getContaBancariaById(@PathVariable Long id, Authentication authentication) {
         try {
@@ -61,15 +67,16 @@ public class ContaBancariaController {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         } catch (Exception e) {
             // Tratamento genérico para outros erros
+            System.err.println(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", "Erro ao criar contaBancaria"));
+                    .body(Map.of("message", "Erro ao criar conta bancaria"));
         }
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateContaBancaria(@PathVariable Long id,
-            @RequestBody ContaBancaria contaBancariaAtualizado,
+            @RequestBody ContaBancariaDTO contaBancariaAtualizado,
             Authentication authentication) {
         try {
             ContaBancaria contaBancaria = contaBancariaService.update(id, contaBancariaAtualizado);
@@ -80,7 +87,7 @@ public class ContaBancariaController {
         } catch (Exception e) {
             // Tratamento genérico para outros erros
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", "Erro ao atualizar contaBancaria"));
+                    .body(Map.of("message", "Erro ao atualizar conta bancaria"));
         }
     }
 
