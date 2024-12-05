@@ -1,12 +1,18 @@
 package com.polarplus.domain;
 
 import java.io.Serializable;
+import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,6 +32,9 @@ public class Banco implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true, updatable = false)
+    private UUID uuid = UUID.randomUUID();
+
     @Column(nullable = false, unique = true)
     private String nome;
 
@@ -35,4 +44,8 @@ public class Banco implements Serializable {
     @Column(nullable = false, columnDefinition = "boolean default true")
     private boolean active;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @JoinColumn(name = "id_empresa", nullable = false)
+    private Empresa empresa;
 }

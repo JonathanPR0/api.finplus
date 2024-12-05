@@ -3,18 +3,19 @@ package com.polarplus.controllers;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.polarplus.domain.Empresa;
 import com.polarplus.domain.user.User;
 import com.polarplus.dto.security.LoginRequestDTO;
 import com.polarplus.dto.security.RegisterRequestDTO;
 import com.polarplus.dto.security.ResponseDTO;
 import com.polarplus.infra.security.TokenService;
+import com.polarplus.repositories.EmpresaRepository;
 import com.polarplus.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
     private final UserRepository repository;
+    private final EmpresaRepository empresaRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
@@ -37,7 +39,7 @@ public class AuthController {
         return ResponseEntity.badRequest().build();
     }
 
-    @PreAuthorize("has('ROLE_ADMIN')")
+    // @PreAuthorize("has('ROLE_ADMIN')")
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequestDTO body) {
         Optional<User> user = this.repository.findByEmail(body.email());
@@ -46,6 +48,10 @@ public class AuthController {
             newUser.setPassword(passwordEncoder.encode(body.password()));
             newUser.setEmail(body.email());
             newUser.setName(body.name());
+            Empresa empresa = empresaRepository.findById(body.idEmpresa())
+                    .orElseThrow(() -> new RuntimeException("Empresa não encontrado"));
+            newUser.setEmpresa(empresa);
+
             this.repository.save(newUser);
 
             String token = this.tokenService.generateToken(newUser);

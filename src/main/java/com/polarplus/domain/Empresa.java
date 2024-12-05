@@ -1,19 +1,13 @@
-package com.polarplus.domain.cr;
+package com.polarplus.domain;
 
 import java.io.Serializable;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.polarplus.domain.Empresa;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,12 +15,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "fin_cr_formas_recebimento")
+@Table(name = "fin_empresas")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FormaDeRecebimentoCR implements Serializable {
+public class Empresa implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -39,8 +33,10 @@ public class FormaDeRecebimentoCR implements Serializable {
     @Column(nullable = false, unique = true)
     private String nome;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    @JoinColumn(name = "id_empresa", nullable = false)
-    private Empresa empresa;
+    @Column(nullable = false, unique = true, length = 20)
+    private String cnpj;
+
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean active;
+
 }

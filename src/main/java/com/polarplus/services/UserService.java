@@ -1,7 +1,6 @@
 package com.polarplus.services;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,7 @@ public class UserService {
 
     private final UserRepository repository;
 
-    public User getOne(UUID id) {
+    public User getOne(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     }

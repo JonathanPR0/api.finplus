@@ -15,38 +15,39 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.polarplus.domain.cr.Cliente;
+import com.polarplus.domain.cr.FormaDeRecebimentoCR;
 import com.polarplus.dto.PaginationDTO;
-import com.polarplus.dto.filters.cr.FiltersClientesDTO;
-import com.polarplus.services.cr.ClienteService;
+import com.polarplus.dto.filters.FilterTermoDTO;
+import com.polarplus.services.cr.FormaDeRecebimentoCRService;
 import com.polarplus.utils.PaginationUtil;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/clientes")
+@RequestMapping("/formas-recebimento")
 @RequiredArgsConstructor
 
-public class ClienteController {
-    private final ClienteService clienteService;
+public class FormasDeRecebimentoCRController {
+    private final FormaDeRecebimentoCRService formaDeRecebimentoCRService;
 
     @GetMapping
-    public ResponseEntity<?> getCliente(Authentication authentication,
+    public ResponseEntity<?> getFormaDeRecebimentoCR(Authentication authentication,
             @ModelAttribute PaginationDTO pagination,
-            @ModelAttribute FiltersClientesDTO filters) {
+            @ModelAttribute FilterTermoDTO filters) {
         try {
-            PaginationUtil.PaginatedResponse<Cliente> clientes = clienteService.getAll(pagination, filters);
-            return ResponseEntity.ok(clientes);
+            PaginationUtil.PaginatedResponse<FormaDeRecebimentoCR> formaDeRecebimentoCRs = formaDeRecebimentoCRService
+                    .getAll(pagination, filters);
+            return ResponseEntity.ok(formaDeRecebimentoCRs);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getClienteById(@PathVariable Long id, Authentication authentication) {
+    public ResponseEntity<?> getFormaDeRecebimentoCRById(@PathVariable Long id, Authentication authentication) {
         try {
-            Cliente cliente = clienteService.getOne(id);
-            return ResponseEntity.ok(cliente);
+            FormaDeRecebimentoCR formaDeRecebimentoCR = formaDeRecebimentoCRService.getOne(id);
+            return ResponseEntity.ok(formaDeRecebimentoCR);
         } catch (RuntimeException e) {
             // Retorna um body com a mensagem de erro
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
@@ -54,12 +55,12 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createCliente(@RequestBody Cliente cliente,
+    public ResponseEntity<?> createFormaDeRecebimentoCR(@RequestBody FormaDeRecebimentoCR formaDeRecebimentoCR,
             Authentication authentication) {
         try {
 
-            Cliente novaCliente = clienteService.insertOne(cliente);
-            return ResponseEntity.status(HttpStatus.CREATED).body(novaCliente);
+            FormaDeRecebimentoCR novaFormaDeRecebimentoCR = formaDeRecebimentoCRService.insertOne(formaDeRecebimentoCR);
+            return ResponseEntity.status(HttpStatus.CREATED).body(novaFormaDeRecebimentoCR);
         } catch (IllegalArgumentException e) {
             // Retorna um body com a mensagem de erro
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
@@ -67,24 +68,25 @@ public class ClienteController {
             // Tratamento genérico para outros erros
             System.err.println(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", "Erro ao criar cliente"));
+                    .body(Map.of("message", "Erro ao criar formaDeRecebimentoCR"));
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCliente(@PathVariable Long id,
-            @RequestBody Cliente clienteAtualizado,
+    public ResponseEntity<?> updateFormaDeRecebimentoCR(@PathVariable Long id,
+            @RequestBody FormaDeRecebimentoCR formaDeRecebimentoCRAtualizado,
             Authentication authentication) {
         try {
-            Cliente cliente = clienteService.update(id, clienteAtualizado);
-            return ResponseEntity.ok(cliente);
+            FormaDeRecebimentoCR formaDeRecebimentoCR = formaDeRecebimentoCRService.update(id,
+                    formaDeRecebimentoCRAtualizado);
+            return ResponseEntity.ok(formaDeRecebimentoCR);
         } catch (RuntimeException e) {
             // Retorna um body com a mensagem de erro
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         } catch (Exception e) {
             // Tratamento genérico para outros erros
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", "Erro ao atualizar cliente"));
+                    .body(Map.of("message", "Erro ao atualizar formaDeRecebimentoCR"));
         }
     }
 
@@ -92,7 +94,7 @@ public class ClienteController {
     public ResponseEntity<?> delete(@PathVariable Long id,
             Authentication authentication) {
         try {
-            clienteService.delete(id);
+            formaDeRecebimentoCRService.delete(id);
             return ResponseEntity.ok(Map.of("message", "Success"));
         } catch (RuntimeException e) {
             // Retorna um body com a mensagem de erro
@@ -100,7 +102,7 @@ public class ClienteController {
         } catch (Exception e) {
             // Tratamento genérico para outros erros
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", "Erro ao atualizar cliente"));
+                    .body(Map.of("message", "Erro ao atualizar formaDeRecebimentoCR"));
         }
     }
 }

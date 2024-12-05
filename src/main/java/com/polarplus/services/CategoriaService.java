@@ -9,10 +9,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.polarplus.domain.Categoria;
+import com.polarplus.domain.Empresa;
 import com.polarplus.domain.enums.TipoCategoria;
 import com.polarplus.dto.CategoriaDTO;
 import com.polarplus.dto.PaginationDTO;
 import com.polarplus.dto.filters.FiltersCategoriaDTO;
+import com.polarplus.infra.context.EmpresaContext;
 import com.polarplus.repositories.CategoriaRepository;
 import com.polarplus.utils.PaginationUtil;
 import com.polarplus.utils.Utils;
@@ -25,6 +27,8 @@ public class CategoriaService {
 
     @Autowired
     private final CategoriaRepository repository;
+    @Autowired
+    private final EmpresaContext empresaContext;
 
     public Categoria getOne(Long id) {
         return repository.findById(id)
@@ -38,16 +42,23 @@ public class CategoriaService {
                 pagination.getPage(),
                 pagination.getSize(),
                 Sort.by(Sort.Direction.fromString(pagination.getDirection()), pagination.getSortBy()));
-        TipoCategoria tipo = null;
+        TipoCategoria tipo = null; // Alterando para TipoCategoria em vez de String
+
+        // Verificar se o tipo foi fornecido e é válido
         if (filters.tipo() != null && !filters.tipo().equals("all")) {
             try {
-                tipo = TipoCategoria.valueOf(filters.tipo());
+                // Verifica se o tipo é um valor válido dentro do enum
+                tipo = TipoCategoria.valueOf(filters.tipo()); // Não precisa mais do .toString()
             } catch (IllegalArgumentException e) {
+                // Tipo inválido, lança uma exceção com a mensagem adequada
                 throw new IllegalArgumentException("Tipo inválido: " + filters.tipo());
             }
         }
+
+        Empresa empresa = empresaContext.getEmpresa();
+
         Page<Categoria> categoriasPage = repository.findByNomeAndTipo(Utils.removerAcentos(filters.nome()), tipo,
-                pageable);
+                empresa.getId(), pageable);
 
         return new PaginationUtil.PaginatedResponse<>(
                 categoriasPage.getContent(), // Lista de itens da página
@@ -76,10 +87,12 @@ public class CategoriaService {
         if (repository.existsByDescricao(categoriaDTO.descricao())) {
             throw new IllegalArgumentException("Já existe uma descrição com este nome.");
         }
+        Empresa empresa = empresaContext.getEmpresa();
 
         Categoria categoria = new Categoria();
         BeanUtils.copyProperties(categoriaDTO, categoria);
         categoria.setTipo(tipo);
+        categoria.setEmpresa(empresa);
         return repository.save(categoria);
     }
 
@@ -95,7 +108,6 @@ public class CategoriaService {
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
 
         BeanUtils.copyProperties(categoriaDTO, categoriaExistente, "id");
-
         return repository.save(categoriaExistente);
     }
 

@@ -7,8 +7,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.polarplus.domain.Banco;
+import com.polarplus.domain.Empresa;
 import com.polarplus.dto.PaginationDTO;
-import com.polarplus.dto.filters.FiltersBancoDTO;
+import com.polarplus.dto.filters.FilterTermoDTO;
+import com.polarplus.infra.context.EmpresaContext;
 import com.polarplus.repositories.BancoRepository;
 import com.polarplus.utils.PaginationUtil;
 
@@ -19,9 +21,10 @@ import lombok.RequiredArgsConstructor;
 public class BancoService {
 
     private final BancoRepository repository;
+    private final EmpresaContext empresaContext;
 
     public PaginationUtil.PaginatedResponse<Banco> getAll(PaginationDTO pagination,
-            FiltersBancoDTO filters) {
+            FilterTermoDTO filters) {
 
         // Configurar a paginação
         Pageable pageable = PageRequest.of(
@@ -29,10 +32,10 @@ public class BancoService {
                 pagination.getSize(),
                 Sort.by(Sort.Direction.fromString(pagination.getDirection()), pagination.getSortBy()));
 
+        Empresa empresa = empresaContext.getEmpresa();
+
         // Verificar se o termo é válido e buscar os dados
-        Page<Banco> bancosPage = (filters.termo() != null && !filters.termo().isBlank())
-                ? repository.findByTermo(filters.termo(), pageable) // Com filtro
-                : repository.findAll(pageable); // Sem filtro
+        Page<Banco> bancosPage = repository.findByTermo(filters.termo(), empresa.getId(), pageable);
 
         // Retornar os resultados paginados
         return new PaginationUtil.PaginatedResponse<>(
@@ -45,7 +48,8 @@ public class BancoService {
     }
 
     public Banco getOne(Long id) {
-        return repository.findById(id)
+        Empresa empresa = empresaContext.getEmpresa();
+        return repository.findByIdAndEmpresa(id, empresa)
                 .orElseThrow(() -> new RuntimeException("Banco não encontrado"));
     }
 
@@ -63,6 +67,9 @@ public class BancoService {
         if (repository.existsByCodigo(banco.getCodigo())) {
             throw new IllegalArgumentException("Já existe um banco com este código.");
         }
+
+        Empresa empresa = empresaContext.getEmpresa();
+        banco.setEmpresa(empresa);
         // Salva no repositório
         return repository.save(banco);
     }

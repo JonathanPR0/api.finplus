@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.polarplus.domain.Banco;
 import com.polarplus.dto.PaginationDTO;
-import com.polarplus.dto.filters.FiltersBancoDTO;
+import com.polarplus.dto.filters.FilterTermoDTO;
 import com.polarplus.services.BancoService;
 import com.polarplus.utils.PaginationUtil;
 
@@ -35,7 +35,7 @@ public class BancoController {
 
     @GetMapping
     public ResponseEntity<?> getBancos(Authentication authentication, @ModelAttribute PaginationDTO pagination,
-            @ModelAttribute FiltersBancoDTO filters) {
+            @ModelAttribute FilterTermoDTO filters) {
         try {
 
             PaginationUtil.PaginatedResponse<Banco> bancos = bancoService.getAll(pagination, filters);

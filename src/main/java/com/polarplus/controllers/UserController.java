@@ -2,7 +2,6 @@ package com.polarplus.controllers;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +26,7 @@ public class UserController {
     private final UserService userService;
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-    // ! DESCOBRIR COMO RESOLVER BUG DE VALIDAÇÃO DE PERMISSÃO
-    @PreAuthorize("hasRole('ROLE_EMPLOYE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<?> getUser(Authentication authentication) {
         try {
@@ -43,7 +41,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or #id == authentication.principal.id")
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable UUID id, Authentication authentication) {
+    public ResponseEntity<?> getUserById(@PathVariable Long id, Authentication authentication) {
         try {
             User user = userService.getOne(id);
             return ResponseEntity.ok(user);

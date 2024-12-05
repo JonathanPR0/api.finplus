@@ -5,12 +5,15 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.polarplus.domain.Categoria;
 import com.polarplus.domain.ContaBancaria;
+import com.polarplus.domain.Empresa;
 import com.polarplus.domain.user.User;
 
 import jakarta.persistence.CascadeType;
@@ -21,6 +24,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -42,6 +46,9 @@ public class TituloCP implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true, updatable = false)
+    private UUID uuid = UUID.randomUUID();
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_status", nullable = false)
     private StatusCP status;
@@ -54,7 +61,7 @@ public class TituloCP implements Serializable {
     @JoinColumn(name = "id_forma_pagamento", nullable = false)
     private FormaDePagamentoCP formaPagamento;
 
-    private Long id_cartao;
+    private UUID id_cartao;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_categoria", nullable = false)
@@ -81,7 +88,7 @@ public class TituloCP implements Serializable {
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    private LocalDateTime created_at;
+    private LocalDateTime created_at = LocalDateTime.now();;
 
     @LastModifiedDate
     @Column(nullable = false)
@@ -93,4 +100,9 @@ public class TituloCP implements Serializable {
 
     @OneToMany(mappedBy = "tituloCP", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<VencimentoCP> vencimentos;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @JoinColumn(name = "id_empresa", nullable = false)
+    private Empresa empresa;
 }

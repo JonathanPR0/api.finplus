@@ -1,4 +1,7 @@
 package com.polarplus.dto.security;
 
-public record RegisterRequestDTO(String name, String email, String password) {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record RegisterRequestDTO(String name, String email, String password,
+                @JsonProperty("id_empresa") Long idEmpresa) {
 }

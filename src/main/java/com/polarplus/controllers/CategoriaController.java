@@ -54,7 +54,7 @@ public class CategoriaController {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_BOSS')")
     @PostMapping
     public ResponseEntity<?> createCategoria(@RequestBody CategoriaDTO categoria,
             Authentication authentication) {
@@ -73,7 +73,7 @@ public class CategoriaController {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_BOSS')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCategoria(@PathVariable Long id,
             @RequestBody CategoriaDTO categoriaAtualizado,

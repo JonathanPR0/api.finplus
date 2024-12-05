@@ -3,7 +3,10 @@ package com.polarplus.domain.cr;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.polarplus.domain.Empresa;
 import com.polarplus.domain.enums.StatusVencimentoCP;
 
 import jakarta.persistence.Column;
@@ -35,8 +38,11 @@ public class PagamentoCR implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, unique = true, updatable = false)
+    private UUID uuid = UUID.randomUUID();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_titulo", nullable = false)
@@ -60,4 +66,9 @@ public class PagamentoCR implements Serializable {
     @Enumerated(EnumType.STRING) // Usando EnumType.STRING para armazenar o nome do enum no banco
     @Column(nullable = false)
     private StatusVencimentoCP status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @JoinColumn(name = "id_empresa", nullable = false)
+    private Empresa empresa;
 }

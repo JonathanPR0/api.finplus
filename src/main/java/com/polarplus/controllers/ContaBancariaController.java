@@ -22,6 +22,7 @@ import com.polarplus.dto.filters.FiltersContaBancariaDTO;
 import com.polarplus.services.ContaBancariaService;
 import com.polarplus.utils.PaginationUtil;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -32,9 +33,13 @@ public class ContaBancariaController {
     private final ContaBancariaService contaBancariaService;
 
     @GetMapping
-    public ResponseEntity<?> getContaBancaria(Authentication authentication, @ModelAttribute PaginationDTO pagination,
+    public ResponseEntity<?> getContaBancaria(Authentication authentication, HttpServletRequest request,
+            @ModelAttribute PaginationDTO pagination,
             @ModelAttribute FiltersContaBancariaDTO filters) {
         try {
+            String idEmpresa = (String) request.getAttribute("idEmpresa");
+            System.err.println(idEmpresa);
+
             PaginationUtil.PaginatedResponse<ContaBancaria> contaBancarias = contaBancariaService.getAll(pagination,
                     filters);
             return ResponseEntity.ok(contaBancarias);
@@ -54,7 +59,7 @@ public class ContaBancariaController {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_BOSS')")
     @PostMapping
     public ResponseEntity<?> createContaBancaria(@RequestBody ContaBancariaDTO contaBancaria,
             Authentication authentication) {
@@ -73,7 +78,7 @@ public class ContaBancariaController {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_BOSS')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateContaBancaria(@PathVariable Long id,
             @RequestBody ContaBancariaDTO contaBancariaAtualizado,

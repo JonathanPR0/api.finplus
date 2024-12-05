@@ -17,7 +17,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.polarplus.infra.security.CustomUserDetailsService;
 import com.polarplus.infra.security.SecurityFilter;
 
 @Configuration
@@ -26,10 +25,10 @@ import com.polarplus.infra.security.SecurityFilter;
 public class SecurityConfig {
 
     private static final List<String> PUBLIC_ROUTES = List.of(
-            "/auth/login");
+            "/auth/login", "/auth/register");
 
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
+    // @Autowired
+    // private CustomUserDetailsService userDetailsService;
 
     @Autowired
     SecurityFilter securityFilter;

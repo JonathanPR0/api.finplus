@@ -1,6 +1,7 @@
 package com.polarplus.domain;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -34,6 +35,9 @@ public class ContaBancaria implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true, updatable = false)
+    private UUID uuid = UUID.randomUUID();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @JoinColumn(name = "id_banco", nullable = false)
@@ -51,5 +55,10 @@ public class ContaBancaria implements Serializable {
 
     @Column(nullable = false, length = 100, unique = true)
     private String descricao;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @JoinColumn(name = "id_empresa", nullable = false)
+    private Empresa empresa;
 
 }

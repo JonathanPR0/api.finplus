@@ -10,9 +10,11 @@ import org.springframework.stereotype.Service;
 
 import com.polarplus.domain.Banco;
 import com.polarplus.domain.ContaBancaria;
+import com.polarplus.domain.Empresa;
 import com.polarplus.dto.ContaBancariaDTO;
 import com.polarplus.dto.PaginationDTO;
 import com.polarplus.dto.filters.FiltersContaBancariaDTO;
+import com.polarplus.infra.context.EmpresaContext;
 import com.polarplus.repositories.BancoRepository;
 import com.polarplus.repositories.ContaBancariaRepository;
 import com.polarplus.utils.PaginationUtil;
@@ -29,6 +31,9 @@ public class ContaBancariaService {
     @Autowired
     private final BancoRepository bancoRepository;
 
+    @Autowired
+    private final EmpresaContext empresaContext;
+
     public ContaBancaria getOne(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Conta bancária não encontrada"));
@@ -42,10 +47,12 @@ public class ContaBancariaService {
                 pagination.getSize(),
                 Sort.by(Sort.Direction.fromString(pagination.getDirection()), pagination.getSortBy()));
 
+        Empresa empresa = empresaContext.getEmpresa();
+
         // Verificar se o termo é válido e buscar os dados
-        Page<ContaBancaria> contasBancariasPage = (filters.termo() != null && !filters.termo().isBlank())
-                ? repository.findByTermo(filters.termo(), pageable) // Com filtro
-                : repository.findAll(pageable); // Sem filtro
+        Page<ContaBancaria> contasBancariasPage = repository.findByTermo(filters.termo(), filters.idBanco(),
+                empresa.getId(), pageable); // Com
+        // filtro
 
         // Retornar os resultados paginados
         return new PaginationUtil.PaginatedResponse<>(
@@ -70,6 +77,7 @@ public class ContaBancariaService {
         if (repository.existsByDescricao(contaBancariaDTO.descricao())) {
             throw new IllegalArgumentException("Já existe um conta bancária com este nome.");
         }
+        Empresa empresa = empresaContext.getEmpresa();
 
         Banco banco = bancoRepository.findById(contaBancariaDTO.idBanco())
                 .orElseThrow(() -> new RuntimeException("Banco não encontrado"));
@@ -82,6 +90,7 @@ public class ContaBancariaService {
 
         // Associando o banco
         contaBancaria.setBanco(banco);
+        contaBancaria.setEmpresa(empresa);
 
         // Salva no repositório
         return repository.save(contaBancaria);
