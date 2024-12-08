@@ -1,7 +1,6 @@
 package com.polarplus.services;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.polarplus.domain.Categoria;
 import com.polarplus.domain.Empresa;
+import com.polarplus.domain.enums.CorCategoria;
 import com.polarplus.domain.enums.TipoCategoria;
 import com.polarplus.dto.CategoriaDTO;
 import com.polarplus.dto.PaginationDTO;
@@ -25,9 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CategoriaService {
 
-    @Autowired
     private final CategoriaRepository repository;
-    @Autowired
     private final EmpresaContext empresaContext;
 
     public Categoria getOne(Long id) {
@@ -42,15 +40,13 @@ public class CategoriaService {
                 pagination.getPage(),
                 pagination.getSize(),
                 Sort.by(Sort.Direction.fromString(pagination.getDirection()), pagination.getSortBy()));
-        TipoCategoria tipo = null; // Alterando para TipoCategoria em vez de String
+        TipoCategoria tipo = null;
 
         // Verificar se o tipo foi fornecido e é válido
         if (filters.tipo() != null && !filters.tipo().equals("all")) {
             try {
-                // Verifica se o tipo é um valor válido dentro do enum
-                tipo = TipoCategoria.valueOf(filters.tipo()); // Não precisa mais do .toString()
+                tipo = TipoCategoria.valueOf(filters.tipo());
             } catch (IllegalArgumentException e) {
-                // Tipo inválido, lança uma exceção com a mensagem adequada
                 throw new IllegalArgumentException("Tipo inválido: " + filters.tipo());
             }
         }
@@ -69,31 +65,44 @@ public class CategoriaService {
     }
 
     public Categoria insertOne(CategoriaDTO categoriaDTO) {
-        if (categoriaDTO.nome() == null || categoriaDTO.nome().isBlank()) {
-            throw new IllegalArgumentException("O nome da categoria é obrigatório");
-        }
-        if (categoriaDTO.descricao() == null || categoriaDTO.descricao().isBlank()) {
-            throw new IllegalArgumentException("O descrição da categoria é obrigatório");
-        }
-        TipoCategoria tipo = null;
         try {
-            tipo = TipoCategoria.valueOf(categoriaDTO.tipo());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("O tipo da categoria é inválido");
-        }
-        if (categoriaDTO.tipo() == null) {
-            throw new IllegalArgumentException("O tipo da categoria é obrigatório");
-        }
-        if (repository.existsByDescricao(categoriaDTO.descricao())) {
-            throw new IllegalArgumentException("Já existe uma descrição com este nome.");
-        }
-        Empresa empresa = empresaContext.getEmpresa();
+            if (categoriaDTO.nome() == null || categoriaDTO.nome().isBlank()) {
+                throw new IllegalArgumentException("O nome da categoria é obrigatório");
+            }
+            if (categoriaDTO.descricao() == null || categoriaDTO.descricao().isBlank()) {
+                throw new IllegalArgumentException("O descrição da categoria é obrigatório");
+            }
+            TipoCategoria tipo = null;
+            try {
+                tipo = TipoCategoria.valueOf(categoriaDTO.tipo());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("O tipo da categoria é inválido");
+            }
+            if (categoriaDTO.tipo() == null) {
+                throw new IllegalArgumentException("O tipo da categoria é obrigatório");
+            }
+            CorCategoria cor = CorCategoria.gray;
+            try {
+                if (categoriaDTO.cor() != null) {
+                    cor = CorCategoria.valueOf(categoriaDTO.cor());
+                }
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("A cor é inválida");
+            }
+            if (repository.existsByDescricao(categoriaDTO.descricao())) {
+                throw new IllegalArgumentException("Já existe uma descrição com este nome.");
+            }
+            Empresa empresa = empresaContext.getEmpresa();
 
-        Categoria categoria = new Categoria();
-        BeanUtils.copyProperties(categoriaDTO, categoria);
-        categoria.setTipo(tipo);
-        categoria.setEmpresa(empresa);
-        return repository.save(categoria);
+            Categoria categoria = new Categoria();
+            BeanUtils.copyProperties(categoriaDTO, categoria);
+            categoria.setTipo(tipo);
+            categoria.setCor(cor);
+            categoria.setEmpresa(empresa);
+            return repository.save(categoria);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     public Categoria update(Long id, CategoriaDTO categoriaDTO) {
@@ -103,11 +112,20 @@ public class CategoriaService {
         if (categoriaDTO.descricao() == null || categoriaDTO.descricao().isBlank()) {
             throw new IllegalArgumentException("O descrição da categoria é obrigatório");
         }
+        CorCategoria cor = CorCategoria.gray;
+        try {
+            if (categoriaDTO.cor() != null) {
+                cor = CorCategoria.valueOf(categoriaDTO.cor());
+            }
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("A cor é inválida");
+        }
 
         Categoria categoriaExistente = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
 
-        BeanUtils.copyProperties(categoriaDTO, categoriaExistente, "id");
+        BeanUtils.copyProperties(categoriaDTO, categoriaExistente, "id", "uuid");
+        categoriaExistente.setCor(cor);
         return repository.save(categoriaExistente);
     }
 

@@ -6,8 +6,9 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.polarplus.domain.Empresa;
-import com.polarplus.domain.enums.StatusVencimentoCP;
+import com.polarplus.domain.enums.StatusVencimento;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -44,28 +45,29 @@ public class PagamentoCR implements Serializable {
     @Column(nullable = false, unique = true, updatable = false)
     private UUID uuid = UUID.randomUUID();
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_titulo", nullable = false)
-    private TituloCR tituloCP;
+    private TituloCR titulo;
 
     @Column(name = "data_vencimento", nullable = false)
+    @JsonProperty("data_vencimento")
     private LocalDate dataVencimento;
 
-    @Column(name = "data_prevista", nullable = false)
-    private LocalDate dataPrevista;
-
     @Column(name = "data_pagamento")
+    @JsonProperty("data_pagamento")
     private LocalDate dataPagamento;
 
     @Column(nullable = false)
     private BigDecimal valor;
 
-    @Column(name = "valor_pago", nullable = false)
+    @Column(name = "valor_pago")
+    @JsonProperty("valor_pago")
     private BigDecimal valorPago;
 
     @Enumerated(EnumType.STRING) // Usando EnumType.STRING para armazenar o nome do enum no banco
     @Column(nullable = false)
-    private StatusVencimentoCP status;
+    private StatusVencimento status = StatusVencimento.pendente;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore

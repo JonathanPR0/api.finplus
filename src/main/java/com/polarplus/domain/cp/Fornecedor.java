@@ -42,9 +42,6 @@ public class Fornecedor implements Serializable {
     @Column(nullable = false, unique = true)
     private String nome;
 
-    @Column(nullable = false, columnDefinition = "boolean default true")
-    private boolean active;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @JoinColumn(name = "id_empresa", nullable = false)

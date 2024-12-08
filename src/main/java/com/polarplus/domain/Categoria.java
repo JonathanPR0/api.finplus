@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.polarplus.domain.enums.CorCategoria;
 import com.polarplus.domain.enums.TipoCategoria;
 
 import jakarta.persistence.Column;
@@ -41,9 +42,13 @@ public class Categoria implements Serializable {
     @Column(nullable = false, length = 50, unique = true)
     private String nome;
 
-    @Enumerated(EnumType.STRING) // Usando EnumType.STRING para armazenar o nome do enum no banco
-    @Column(nullable = true)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private TipoCategoria tipo;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
+    private CorCategoria cor;
 
     @Column(nullable = false)
     private String descricao;

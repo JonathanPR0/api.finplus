@@ -21,6 +21,7 @@ public class EmpresaInterceptor implements HandlerInterceptor {
         User user = getUserFromRequest(request);
 
         if (user != null) {
+            request.setAttribute("id_user", user.getId());
             request.setAttribute("id_empresa", user.getEmpresa().getId());
         }
         return true;

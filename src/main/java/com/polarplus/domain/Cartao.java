@@ -1,10 +1,10 @@
-package com.polarplus.domain.cr;
+package com.polarplus.domain;
 
 import java.io.Serializable;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.polarplus.domain.Empresa;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,12 +21,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "fin_cr_formas_recebimento")
+@Table(name = "fin_cartoes")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FormaDeRecebimentoCR implements Serializable {
+public class Cartao implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -37,7 +37,16 @@ public class FormaDeRecebimentoCR implements Serializable {
     private UUID uuid = UUID.randomUUID();
 
     @Column(nullable = false, unique = true)
-    private String nome;
+    private String descricao;
+
+    @Column(nullable = false)
+    @JsonProperty("dia_vencimento")
+    private String diaVencimento;
+
+    @Column(nullable = false)
+    @JsonProperty("dia_corte")
+
+    private String diaCorte;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore

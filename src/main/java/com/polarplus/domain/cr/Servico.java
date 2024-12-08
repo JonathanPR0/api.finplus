@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.polarplus.domain.Categoria;
 import com.polarplus.domain.Empresa;
 
@@ -50,12 +51,15 @@ public class Servico implements Serializable {
     private String descricao;
 
     @Column(name = "data_servico", nullable = false)
+    @JsonProperty("data_servico")
     private LocalDate dataServico;
 
     @Column(name = "data_servico_futuro", nullable = false)
+    @JsonProperty("data_servico_futuro")
     private LocalDate dataServicoFuturo;
 
     @Column(name = "data_expiracao_garantia")
+    @JsonProperty("data_expiracao_garantia")
     private LocalDate dataExpiracaoGarantia;
 
     @ManyToOne(fetch = FetchType.LAZY)

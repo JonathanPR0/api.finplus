@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,11 +47,14 @@ public class ContaBancaria implements Serializable {
     @Column(nullable = false, length = 20)
     private String agencia;
     @Column(name = "dv_agencia", length = 2)
+    @JsonProperty("dv_agencia")
+
     private String dvAgencia;
 
     @Column(nullable = false, length = 20)
     private String conta;
     @Column(name = "dv_conta", length = 2)
+    @JsonProperty("dv_conta")
     private String dvConta;
 
     @Column(nullable = false, length = 100, unique = true)

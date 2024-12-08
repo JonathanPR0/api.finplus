@@ -1,4 +1,4 @@
-package com.polarplus.controllers.cr;
+package com.polarplus.controllers;
 
 import java.util.Map;
 
@@ -15,38 +15,39 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.polarplus.domain.cr.Cliente;
+import com.polarplus.domain.Cartao;
 import com.polarplus.dto.PaginationDTO;
-import com.polarplus.dto.filters.cr.FiltersClientesDTO;
-import com.polarplus.services.cr.ClienteService;
+import com.polarplus.dto.filters.FilterTermoDTO;
+import com.polarplus.services.CartaoService;
 import com.polarplus.utils.PaginationUtil;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/contas-receber/clientes")
+@RequestMapping("/cartoes")
 @RequiredArgsConstructor
 
-public class ClienteController {
-    private final ClienteService clienteService;
+public class CartaoController {
+    private final CartaoService cartaoCRService;
 
     @GetMapping
-    public ResponseEntity<?> getCliente(Authentication authentication,
+    public ResponseEntity<?> getCartaoCR(Authentication authentication,
             @ModelAttribute PaginationDTO pagination,
-            @ModelAttribute FiltersClientesDTO filters) {
+            @ModelAttribute FilterTermoDTO filters) {
         try {
-            PaginationUtil.PaginatedResponse<Cliente> clientes = clienteService.getAll(pagination, filters);
-            return ResponseEntity.ok(clientes);
+            PaginationUtil.PaginatedResponse<Cartao> cartaoCRs = cartaoCRService
+                    .getAll(pagination, filters);
+            return ResponseEntity.ok(cartaoCRs);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getClienteById(@PathVariable Long id, Authentication authentication) {
+    public ResponseEntity<?> getCartaoCRById(@PathVariable Long id, Authentication authentication) {
         try {
-            Cliente cliente = clienteService.getOne(id);
-            return ResponseEntity.ok(cliente);
+            Cartao cartaoCR = cartaoCRService.getOne(id);
+            return ResponseEntity.ok(cartaoCR);
         } catch (RuntimeException e) {
             // Retorna um body com a mensagem de erro
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
@@ -54,12 +55,12 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createCliente(@RequestBody Cliente cliente,
+    public ResponseEntity<?> createCartaoCR(@RequestBody Cartao cartaoCR,
             Authentication authentication) {
         try {
 
-            Cliente novaCliente = clienteService.insertOne(cliente);
-            return ResponseEntity.status(HttpStatus.CREATED).body(novaCliente);
+            Cartao novaCartaoCR = cartaoCRService.insertOne(cartaoCR);
+            return ResponseEntity.status(HttpStatus.CREATED).body(novaCartaoCR);
         } catch (IllegalArgumentException e) {
             // Retorna um body com a mensagem de erro
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
@@ -67,24 +68,25 @@ public class ClienteController {
             // Tratamento genérico para outros erros
             System.err.println(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", "Erro ao criar cliente"));
+                    .body(Map.of("message", "Erro ao criar cartão"));
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCliente(@PathVariable Long id,
-            @RequestBody Cliente clienteAtualizado,
+    public ResponseEntity<?> updateCartaoCR(@PathVariable Long id,
+            @RequestBody Cartao cartaoCRAtualizado,
             Authentication authentication) {
         try {
-            Cliente cliente = clienteService.update(id, clienteAtualizado);
-            return ResponseEntity.ok(cliente);
+            Cartao cartaoCR = cartaoCRService.update(id,
+                    cartaoCRAtualizado);
+            return ResponseEntity.ok(cartaoCR);
         } catch (RuntimeException e) {
             // Retorna um body com a mensagem de erro
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         } catch (Exception e) {
             // Tratamento genérico para outros erros
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", "Erro ao atualizar cliente"));
+                    .body(Map.of("message", "Erro ao atualizar cartão"));
         }
     }
 
@@ -92,7 +94,7 @@ public class ClienteController {
     public ResponseEntity<?> delete(@PathVariable Long id,
             Authentication authentication) {
         try {
-            clienteService.delete(id);
+            cartaoCRService.delete(id);
             return ResponseEntity.ok(Map.of("message", "Success"));
         } catch (RuntimeException e) {
             // Retorna um body com a mensagem de erro
@@ -100,7 +102,7 @@ public class ClienteController {
         } catch (Exception e) {
             // Tratamento genérico para outros erros
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", "Erro ao atualizar cliente"));
+                    .body(Map.of("message", "Erro ao remover cartão"));
         }
     }
 }

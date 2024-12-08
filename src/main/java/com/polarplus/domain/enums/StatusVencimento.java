@@ -1,5 +1,5 @@
 package com.polarplus.domain.enums;
 
-public enum StatusVencimentoCP {
+public enum StatusVencimento {
     pendente, pago
 }

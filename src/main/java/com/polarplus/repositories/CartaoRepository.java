@@ -1,4 +1,4 @@
-package com.polarplus.repositories.cr;
+package com.polarplus.repositories;
 
 import java.util.Optional;
 
@@ -9,20 +9,20 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.polarplus.domain.Cartao;
 import com.polarplus.domain.Empresa;
-import com.polarplus.domain.cr.FormaDeRecebimentoCR;
 
 @Repository
-public interface FormasDeRecebimentoCRRepository extends JpaRepository<FormaDeRecebimentoCR, Long> {
+public interface CartaoRepository extends JpaRepository<Cartao, Long> {
 
-        Optional<FormaDeRecebimentoCR> findByIdAndEmpresa(Long id, Empresa empresa);
+        Optional<Cartao> findByIdAndEmpresa(Long id, Empresa empresa);
 
         void deleteByIdAndEmpresa(Long id, Empresa empresa);
 
         // Consulta personalizada com filtro LIKE e paginação
-        @Query(value = "SELECT fp.* FROM fin_cr_formas_recebimento fp WHERE " +
+        @Query(value = "SELECT fp.* FROM fin_cartoes fp WHERE " +
                         "(:termo IS NULL OR unaccent(fp.nome) LIKE CONCAT('%', :termo, '%')) " +
                         "AND fp.id_empresa = :idEmpresa ", nativeQuery = true)
-        Page<FormaDeRecebimentoCR> findByTermo(@Param("termo") String termo, Long idEmpresa, Pageable pageable);
+        Page<Cartao> findByTermo(@Param("termo") String termo, Long idEmpresa, Pageable pageable);
 
 }

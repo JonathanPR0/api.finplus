@@ -11,8 +11,10 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.polarplus.domain.ContaBancaria;
 import com.polarplus.domain.Empresa;
+import com.polarplus.domain.FormaPagamento;
 import com.polarplus.domain.user.User;
 
 import jakarta.persistence.CascadeType;
@@ -33,7 +35,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "fin_cr_titulo")
+@Table(name = "fin_cr_titulos")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -55,15 +57,17 @@ public class TituloCR implements Serializable {
     private StatusCR status;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_fornecedor", nullable = false)
-    private Cliente fornecedor;
+    @JoinColumn(name = "id_cliente", nullable = false)
+    private Cliente cliente;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_forma_recebimento", nullable = false)
-    private FormaDeRecebimentoCR formaRecebimento;
+    @JsonProperty("forma_recebimento")
+    private FormaPagamento formaRecebimento;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_conta_bancaria", nullable = false)
+    @JsonProperty("conta_bancaria")
     private ContaBancaria contaBancaria;
 
     @Column(nullable = false)
@@ -72,29 +76,29 @@ public class TituloCR implements Serializable {
     @Column(nullable = false)
     private BigDecimal valor;
 
-    @Column(name = "data_emissao", nullable = false)
-    private LocalDate dataEmissao;
-
-    @Column(name = "data_vencimento", nullable = false)
-    private LocalDate dataVencimento;
-
     @Column(name = "data_pagamento")
+    @JsonProperty("data_pagamento")
     private LocalDate dataPagamento;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    private LocalDateTime created_at = LocalDateTime.now();
+    private LocalDateTime created_at;
 
     @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updated_at;
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "tituloCP", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<PagamentoCR> vencimentos;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_servico", nullable = false)
+    private Servico servico;
+
+    @OneToMany(mappedBy = "titulo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PagamentoCR> pagamentos;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore

@@ -1,10 +1,9 @@
-package com.polarplus.domain.cp;
+package com.polarplus.domain;
 
 import java.io.Serializable;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.polarplus.domain.Empresa;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,12 +20,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "fin_cp_formas_pagamento")
+@Table(name = "fin_formas_pagamento")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FormaDePagamentoCP implements Serializable {
+public class FormaPagamento implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
