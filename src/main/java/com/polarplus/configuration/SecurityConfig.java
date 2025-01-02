@@ -25,7 +25,7 @@ import com.polarplus.infra.security.SecurityFilter;
 public class SecurityConfig {
 
     private static final List<String> PUBLIC_ROUTES = List.of(
-            "/auth/login", "/auth/register");
+            "/auth/login", "/auth/register", "/auth/validate-token");
 
     // @Autowired
     // private CustomUserDetailsService userDetailsService;

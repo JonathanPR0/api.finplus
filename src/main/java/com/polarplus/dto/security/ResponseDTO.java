@@ -1,4 +1,6 @@
 package com.polarplus.dto.security;
 
-public record ResponseDTO(String name, String token) {
+import com.polarplus.domain.user.User;
+
+public record ResponseDTO(User user, String token) {
 }
