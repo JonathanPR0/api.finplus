@@ -6,10 +6,11 @@ import java.sql.Date;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record ResponseTituloCRGetAllDTO(
-        String descricao,
-        String categoria,
-        String status,
-        BigDecimal valor,
-        String cor,
-        @JsonProperty("data_servico") Date dataServico) {
+                Long id,
+                String descricao,
+                String categoria,
+                String status,
+                BigDecimal valor,
+                String cor,
+                @JsonProperty("data_servico") Date dataServico) {
 }

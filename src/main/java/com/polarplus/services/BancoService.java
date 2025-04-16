@@ -7,10 +7,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.polarplus.domain.Banco;
-import com.polarplus.domain.Empresa;
 import com.polarplus.dto.PaginationDTO;
 import com.polarplus.dto.filters.FilterTermoDTO;
-import com.polarplus.infra.context.EmpresaContext;
 import com.polarplus.repositories.BancoRepository;
 import com.polarplus.utils.PaginationUtil;
 
@@ -21,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 public class BancoService {
 
     private final BancoRepository repository;
-    private final EmpresaContext empresaContext;
 
     public PaginationUtil.PaginatedResponse<Banco> getAll(PaginationDTO pagination,
             FilterTermoDTO filters) {
@@ -32,10 +29,8 @@ public class BancoService {
                 pagination.getSize(),
                 Sort.by(Sort.Direction.fromString(pagination.getDirection()), pagination.getSortBy()));
 
-        Empresa empresa = empresaContext.getEmpresa();
-
         // Verificar se o termo é válido e buscar os dados
-        Page<Banco> bancosPage = repository.findByTermo(filters.termo(), empresa.getId(), pageable);
+        Page<Banco> bancosPage = repository.findByTermo(filters.termo(), pageable);
 
         // Retornar os resultados paginados
         return new PaginationUtil.PaginatedResponse<>(
@@ -48,8 +43,7 @@ public class BancoService {
     }
 
     public Banco getOne(Long id) {
-        Empresa empresa = empresaContext.getEmpresa();
-        return repository.findByIdAndEmpresa(id, empresa)
+        return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Banco não encontrado"));
     }
 
@@ -58,8 +52,8 @@ public class BancoService {
         if (banco.getNome() == null || banco.getNome().isBlank()) {
             throw new IllegalArgumentException("O nome do banco é obrigatório");
         }
-        if (banco.getCodigo() == null || banco.getCodigo().isBlank()) {
-            throw new IllegalArgumentException("O código do banco é obrigatório");
+        if (banco.getImg() == null || banco.getImg().isBlank()) {
+            throw new IllegalArgumentException("A imagem do banco é obrigatória");
         }
         if (repository.existsByNome(banco.getNome())) {
             throw new IllegalArgumentException("Já existe um banco com este nome.");
@@ -68,8 +62,6 @@ public class BancoService {
             throw new IllegalArgumentException("Já existe um banco com este código.");
         }
 
-        Empresa empresa = empresaContext.getEmpresa();
-        banco.setEmpresa(empresa);
         // Salva no repositório
         return repository.save(banco);
     }
@@ -82,6 +74,7 @@ public class BancoService {
         // Atualiza os campos permitidos
         bancoExistente.setNome(bancoAtualizado.getNome());
         bancoExistente.setCodigo(bancoAtualizado.getCodigo());
+        bancoExistente.setImg(bancoAtualizado.getImg());
         bancoExistente.setActive(bancoAtualizado.isActive());
 
         // Salva as alterações

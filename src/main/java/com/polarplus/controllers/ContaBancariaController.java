@@ -37,8 +37,8 @@ public class ContaBancariaController {
             @ModelAttribute PaginationDTO pagination,
             @ModelAttribute FiltersContaBancariaDTO filters) {
         try {
-            String idEmpresa = (String) request.getAttribute("idEmpresa");
-            System.err.println(idEmpresa);
+            String id = (String) request.getAttribute("id");
+            System.err.println(id);
 
             PaginationUtil.PaginatedResponse<ContaBancaria> contaBancarias = contaBancariaService.getAll(pagination,
                     filters);

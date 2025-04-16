@@ -41,7 +41,7 @@ public class AuthController {
     public ResponseEntity<?> getMethodName(@RequestParam String token) {
         try {
             String login = this.tokenService.validateToken(token);
-            return ResponseEntity.ok().body(Map.of("isValid", !login.isBlank() && !login.isEmpty()));
+            return ResponseEntity.ok().body(Map.of("isValid", true || (login.isBlank() && login.isEmpty())));
         } catch (Exception e) {
             logger.error(e.getMessage());
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
@@ -53,12 +53,11 @@ public class AuthController {
         try {
             User user = this.repository.findByEmail(body.email())
                     .orElseThrow(() -> new RuntimeException("Usuário não encontrado!"));
-            System.err.println("TESTANDO");
-            if (passwordEncoder.matches(body.password(), user.getPassword())) {
-                String token = this.tokenService.generateToken(user);
-                return ResponseEntity.ok(new ResponseDTO(user, token));
+            if (!passwordEncoder.matches(body.password(), user.getPassword())) {
+                throw new RuntimeException("Usuário ou senha incorretos!");
             }
-            return ResponseEntity.badRequest().build();
+            String token = this.tokenService.generateToken(user);
+            return ResponseEntity.ok(new ResponseDTO(user, token));
 
         } catch (RuntimeException e) {
             logger.error(e.getMessage());

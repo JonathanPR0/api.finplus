@@ -51,8 +51,7 @@ public class ContaBancariaService {
 
         // Verificar se o termo é válido e buscar os dados
         Page<ContaBancaria> contasBancariasPage = repository.findByTermo(filters.termo(), filters.idBanco(),
-                empresa.getId(), pageable); // Com
-        // filtro
+                empresa.getId(), pageable); // Com filtro
 
         // Retornar os resultados paginados
         return new PaginationUtil.PaginatedResponse<>(
@@ -67,12 +66,6 @@ public class ContaBancariaService {
         // Validações, se necessário
         if (contaBancariaDTO.descricao() == null || contaBancariaDTO.descricao().isBlank()) {
             throw new IllegalArgumentException("O nome do conta bancária é obrigatório");
-        }
-        if (contaBancariaDTO.conta() == null || contaBancariaDTO.conta().isBlank()) {
-            throw new IllegalArgumentException("O código da conta bancária é obrigatório");
-        }
-        if (contaBancariaDTO.agencia() == null || contaBancariaDTO.agencia().isBlank()) {
-            throw new IllegalArgumentException("A agência da conta bancária é obrigatória");
         }
         if (repository.existsByDescricao(contaBancariaDTO.descricao())) {
             throw new IllegalArgumentException("Já existe um conta bancária com este nome.");
@@ -100,12 +93,6 @@ public class ContaBancariaService {
         // Validações, se necessário
         if (contaBancariaDTO.descricao() == null || contaBancariaDTO.descricao().isBlank()) {
             throw new IllegalArgumentException("O nome do conta bancária é obrigatório");
-        }
-        if (contaBancariaDTO.conta() == null || contaBancariaDTO.conta().isBlank()) {
-            throw new IllegalArgumentException("O código da conta bancária é obrigatório");
-        }
-        if (contaBancariaDTO.agencia() == null || contaBancariaDTO.agencia().isBlank()) {
-            throw new IllegalArgumentException("A agência da conta bancária é obrigatória");
         }
 
         // Busca a conta bancária existente pelo ID

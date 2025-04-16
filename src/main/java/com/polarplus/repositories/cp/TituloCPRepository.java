@@ -20,6 +20,7 @@ public interface TituloCPRepository extends JpaRepository<TituloCP, Long> {
 
         @Query(value = """
                         SELECT
+                                t.id,
                                 t.descricao AS descricao,
                                 c.nome AS categoria,
                                 st.status AS status,

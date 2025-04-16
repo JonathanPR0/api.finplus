@@ -76,8 +76,8 @@ public class TituloCR implements Serializable {
     @Column(nullable = false)
     private BigDecimal valor;
 
-    @Column(name = "data_pagamento")
-    @JsonProperty("data_pagamento")
+    @Column(name = "data_recebimento")
+    @JsonProperty("data_recebimento")
     private LocalDate dataPagamento;
 
     @CreatedDate

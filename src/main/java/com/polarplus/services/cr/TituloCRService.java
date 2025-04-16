@@ -87,6 +87,7 @@ public class TituloCRService {
 
         List<ResponseTituloCRGetAllDTO> dtos = titulosPage.getContent().stream()
                 .map(tuple -> new ResponseTituloCRGetAllDTO(
+                        tuple.get("id", Long.class),
                         tuple.get("descricao", String.class),
                         tuple.get("categoria", String.class),
                         tuple.get("status", String.class),

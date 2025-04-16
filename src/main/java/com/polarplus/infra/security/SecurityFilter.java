@@ -49,8 +49,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         }
 
         var login = tokenService.validateToken(token);
-
-        if (!login.isBlank() && !login.isEmpty()) {
+        if (login.isBlank() && login.isEmpty()) {
             sendErrorResponse(response, "Token inválido.");
             return;
         }

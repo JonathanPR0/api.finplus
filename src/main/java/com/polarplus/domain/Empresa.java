@@ -31,7 +31,7 @@ public class Empresa implements Serializable {
     private UUID uuid = UUID.randomUUID();
 
     @Column(nullable = false, unique = true)
-    private String nome;
+    private String name;
 
     @Column(nullable = false, unique = true, length = 20)
     private String cnpj;

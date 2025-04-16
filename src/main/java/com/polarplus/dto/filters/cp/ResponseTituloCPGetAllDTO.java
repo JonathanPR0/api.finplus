@@ -6,10 +6,11 @@ import java.sql.Timestamp;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record ResponseTituloCPGetAllDTO(
-                String descricao,
-                String categoria,
-                String status,
-                BigDecimal valor,
-                String cor,
-                @JsonProperty("data_titulo") Timestamp dataTitulo) {
+        Long id,
+        String descricao,
+        String categoria,
+        String status,
+        BigDecimal valor,
+        String cor,
+        @JsonProperty("data_titulo") Timestamp dataTitulo) {
 }
